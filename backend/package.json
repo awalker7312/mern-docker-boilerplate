@@ -1,0 +1,25 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "node --watch app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awalker7312/mern-docker-boilerplate.git"
+  },
+  "author": "Alan Walker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/awalker7312/mern-docker-boilerplate/issues"
+  },
+  "homepage": "https://github.com/awalker7312/mern-docker-boilerplate#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.0.0"
+  }
+}

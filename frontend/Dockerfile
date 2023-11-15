@@ -1,0 +1,17 @@
+# Use official node image as the base image
+FROM node:20-slim
+
+# Set /app directory as default working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install all dependencies
+RUN npm install
+
+# Expose port 3000
+EXPOSE 3000
+
+# Serve the app
+CMD [ "npm", "start"]
