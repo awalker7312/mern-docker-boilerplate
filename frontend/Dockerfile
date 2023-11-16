@@ -14,4 +14,4 @@ RUN npm install
 EXPOSE 3000
 
 # Serve the app
-CMD [ "npm", "start"]
+CMD [ "npm", "run" ,"dev"]

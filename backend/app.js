@@ -9,9 +9,7 @@ mongoose.connect('mongodb://mdb:27017/testdb')
   .catch(err => console.log(err));
 
 // Define routes
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+app.use('/', require('./routes/routes'));
 
 // Start the server
 const port = process.env.PORT || 3000;

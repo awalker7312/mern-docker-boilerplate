@@ -29,6 +29,8 @@ services:
   frontend:
     build: ./frontend
     container_name: frontend
+    env_file:
+      - ./frontend/.env
     stdin_open: true
     ports:
       - "8080:3000"
