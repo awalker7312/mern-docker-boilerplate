@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   frontend:
-    container_name: mern-frontend
+    container_name: mern_frontend_dev
     build:
       context: ./frontend
       dockerfile: docker/Dockerfile.dev
@@ -10,7 +10,7 @@ services:
       EXPRESS_HOST: backend
       NODE_ENV: development
     networks:
-      - frontend
+      - frontend_dev
     ports:
       - "8080:8080"
     volumes:
@@ -23,15 +23,15 @@ services:
       - backend
 
   backend:
-    container_name: mern-backend
+    container_name: mern_backend_dev
     build:
       context: ./backend
       dockerfile: docker/Dockerfile.dev
     networks:
-      - default
-      - frontend
+      - default_dev
+      - frontend_dev
     ports:
-      - "3000:3000"
+      - "3001:3000"
     env_file: ./backend/.env
     environment:
       NODE_ENV: development
@@ -43,12 +43,12 @@ services:
       - mongo
 
   mongo:
-    container_name: mern-mongo
+    container_name: mern_mongo_dev
     image: mongo:latest
     networks:
-      - default
+      - default_dev
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - ./backend/docker/mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - mongo-data:/data/db
@@ -62,7 +62,7 @@ volumes:
   mongo-data:
 
 networks:
-  default:
-    name: mern-backend
-  frontend:
-    name: mern-frontend
+  default_dev:
+    name: mern_backend_dev
+  frontend_dev:
+    name: mern_frontend_dev
