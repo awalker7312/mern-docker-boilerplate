@@ -1,0 +1,22 @@
+FROM node:20-slim as builder
+WORKDIR /usr/src/frontend
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+EXPOSE 8080
+
+FROM nginx
+WORKDIR /usr/share/nginx/html
+RUN apt-get update && apt-get install -y certbot python3-certbot-nginx vim
+# Remove default nginx configuration
+RUN rm /etc/nginx/conf.d/*
+# Remove default nginx static assets
+RUN rm -rf /usr/share/nginx/html/*
+COPY --from=builder /usr/src/frontend/dist /usr/share/nginx/html
+COPY docker/nginx/nginx.conf /etc/nginx/conf.d/
+EXPOSE 80
+RUN useradd -ms /bin/bash appuser
+RUN chown -R appuser:appuser /etc/nginx/conf.d/ /var/cache/nginx/ /var/run/
+USER appuser
+ENTRYPOINT ["nginx", "-g", "daemon off;"]

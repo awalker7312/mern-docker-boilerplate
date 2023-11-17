@@ -5,19 +5,15 @@ services:
     container_name: mern-frontend
     build:
       context: ./frontend
-      dockerfile: docker/Dockerfile.dev
+      dockerfile: docker/Dockerfile.prod
     environment:
       EXPRESS_HOST: backend
-      NODE_ENV: development
+      NODE_ENV: production
     networks:
       - frontend
     ports:
-      - "8080:8080"
-    volumes:
-      - ./frontend:/usr/src/frontend
-      - /usr/src/frontend/node_modules
-    # https://github.com/facebook/create-react-app/issues/8688
-    stdin_open: true
+      - "80:80"
+      - "443:443"
     restart: always
     depends_on:
       - backend
@@ -26,7 +22,7 @@ services:
     container_name: mern-backend
     build:
       context: ./backend
-      dockerfile: docker/Dockerfile.dev
+      dockerfile: docker/Dockerfile.prod
     networks:
       - default
       - frontend
@@ -34,10 +30,7 @@ services:
       - "3000:3000"
     env_file: ./backend/.env
     environment:
-      NODE_ENV: development
-    volumes:
-      - ./backend:/usr/src/backend
-      - /usr/src/backend/node_modules
+      NODE_ENV: production
     restart: always
     depends_on:
       - mongo
