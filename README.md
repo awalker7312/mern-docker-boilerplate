@@ -9,7 +9,7 @@ A developer-friendly dockerized MERN stack boilerplate.
 
 **Client:** React, Vite, Bootstrap, Nginx(prod)
 
-**Server:** Node, Express
+**Server:** Node, Express, MongoDB
 
 
 ## Development
