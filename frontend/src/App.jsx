@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import reactLogo from './assets/react.svg'
+import bootstrapLogo from './assets/bootstrap.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { Button } from 'react-bootstrap';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -10,9 +12,10 @@ function App() {
 
   useEffect(() => {
     axios.get('/api/hello')
-    .then(response => {
-      setData(response.data)
-    })},[]);
+      .then(response => {
+        setData(response.data)
+      })
+  }, []);
 
   return (
     <>
@@ -23,12 +26,15 @@ function App() {
         <a href="https://react.dev" target="_blank" rel="noreferrer">
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
+        <a href="https://react-bootstrap.github.io/" target="_blank" rel="noreferrer">
+          <img src={bootstrapLogo} className="logo react" alt="React Bootstrap logo" />
+        </a>
       </div>
-      <h1>Vite + React</h1>
+      <h1>Vite + React + Bootstrap</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+        <Button variant="primary" onClick={() => setCount((count) => count + 1)}>
           count is {count}
-        </button>
+        </Button>
         <p>
           {data}
         </p>
