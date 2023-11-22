@@ -1,4 +1,6 @@
 const express = require("express");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 
 // Load environment variables from .env file
 require("dotenv").config();
@@ -8,16 +10,26 @@ require("./config/database");
 
 // Create an express application
 const app = express();
+app.use(express.json());
+app.disable('x-powered-by');
+
+app.use(session({
+    name: "session",
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {secure: false },
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        collectionName: "sessions",
+    }),
+}));
 
 // Set the port to the environment variable PORT or default to 3000
 const port = process.env.PORT || 3000;
 
-// Use express.json() middleware to parse incoming JSON requests
-app.use(express.json());
-
 // Define the routes for the API
-app.use("/users", require("./routes/userRoute"));
-app.use("/auth", require("./routes/authRoute"));
+app.use("/user", require("./routes/userRoute"));
 
 // Define a route for the root path that sends a simple health check response
 app.get("/", (req, res) => {
