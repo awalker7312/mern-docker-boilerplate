@@ -11,7 +11,7 @@ function App() {
   const [data, setData] = useState(null)
 
   useEffect(() => {
-    axios.get('/api/hello')
+    axios.get('/api/')
       .then(response => {
         setData(response.data)
       })
