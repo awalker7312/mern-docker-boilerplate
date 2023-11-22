@@ -8,7 +8,7 @@ EXPOSE 8080
 
 FROM nginx
 WORKDIR /usr/share/nginx/html
-RUN apt-get update && apt-get install -y certbot python3-certbot-nginx vim
+#RUN apt-get update && apt-get install -y certbot python3-certbot-nginx vim
 # Remove default nginx configuration
 RUN rm /etc/nginx/conf.d/*
 # Remove default nginx static assets
