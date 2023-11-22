@@ -10,13 +10,12 @@ services:
       EXPRESS_HOST: backend
       NODE_ENV: development
     networks:
-      - frontend_dev
+      - react-express-dev
     ports:
       - "8080:8080"
     volumes:
       - ./frontend:/usr/src/frontend
       - /usr/src/frontend/node_modules
-    # https://github.com/facebook/create-react-app/issues/8688
     stdin_open: true
     restart: always
     depends_on:
@@ -28,8 +27,8 @@ services:
       context: ./backend
       dockerfile: docker/Dockerfile.dev
     networks:
-      - default_dev
-      - frontend_dev
+      - express-mongo-dev
+      - react-express-dev
     ports:
       - "3001:3000"
     env_file: ./backend/.env
@@ -46,7 +45,7 @@ services:
     container_name: mern_mongo_dev
     image: mongo:latest
     networks:
-      - default_dev
+      - express-mongo-dev
     ports:
       - "27018:27017"
     volumes:
@@ -62,7 +61,5 @@ volumes:
   mongo-data:
 
 networks:
-  default_dev:
-    name: mern_backend_dev
-  frontend_dev:
-    name: mern_frontend_dev
+  react-express-dev:
+  express-mongo-dev:

@@ -10,7 +10,7 @@ services:
       EXPRESS_HOST: backend
       NODE_ENV: production
     networks:
-      - frontend_prod
+      - react-express-prod
     ports:
       - "80:80"
       - "443:443"
@@ -24,8 +24,8 @@ services:
       context: ./backend
       dockerfile: docker/Dockerfile.prod
     networks:
-      - default_prod
-      - frontend_prod
+      - express-mongo-prod
+      - react-express-prod
     ports:
       - "3000:3000"
     env_file: ./backend/.env
@@ -39,7 +39,7 @@ services:
     container_name: mern_mongo_prod
     image: mongo:latest
     networks:
-      - default_prod
+      - express-mongo-prod
     ports:
       - "27017:27017"
     volumes:
@@ -55,7 +55,5 @@ volumes:
   mongo-data:
 
 networks:
-  default_prod:
-    name: mern_backend_prod
-  frontend_prod:
-    name: mern_frontend_prod
+  react-express-prod:
+  express-mongo-prod:

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$1" == "dev" ]; then
-    docker-compose -f docker-compose.dev.yml -p mern_boilerplate_dev up --build
+    docker-compose -f docker-compose.dev.yml -p mern_boilerplate_dev up -d --build
 elif [ "$1" == "prod" ]; then
     docker-compose -f docker-compose.prod.yml -p mern_boilerplate_prod up -d --build
 elif [ "$1" == "start-dev" ]; then
