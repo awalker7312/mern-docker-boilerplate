@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import reactLogo from './assets/react.svg'
-import bootstrapLogo from './assets/bootstrap.svg'
 import viteLogo from '/vite.svg'
 import './styles/App.css'
-import { Button } from 'react-bootstrap';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -26,15 +24,12 @@ function App() {
         <a href="https://react.dev" target="_blank" rel="noreferrer">
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
-        <a href="https://react-bootstrap.github.io/" target="_blank" rel="noreferrer">
-          <img src={bootstrapLogo} className="logo" alt="React Bootstrap logo" />
-        </a>
       </div>
-      <h1>Vite + React + Bootstrap</h1>
+      <h1>Vite + React</h1>
       <div className="card">
-        <Button variant="primary" onClick={() => setCount((count) => count + 1)}>
+        <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
-        </Button>
+        </button>
         <p>
           {data}
         </p>
