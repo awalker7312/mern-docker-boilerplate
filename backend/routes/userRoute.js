@@ -95,4 +95,12 @@ router.post("/login", async (req, res) => {
     });
 });
 
+router.post("/logout", auth.isAuthenticated, async (req, res) => {
+    req.session.destroy();
+    res.clearCookie("session");
+    res.status(200).json({
+        status: "success",
+    });
+});
+
 module.exports = router;
