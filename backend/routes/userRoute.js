@@ -9,7 +9,7 @@ router.post("/register", async (req, res) => {
     try {
         // Extracting user information from the request body
         const { firstName, lastName, email, password, role } = req.body;
-        
+
         // Check if a user with the given email already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -95,11 +95,19 @@ router.post("/login", async (req, res) => {
     });
 });
 
-router.post("/logout", auth.isAuthenticated, async (req, res) => {
+router.post("/logout", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(400).json({
+            status: "error",
+            error: "Not logged in.",
+        });
+    }
+
     req.session.destroy();
     res.clearCookie("session");
     res.status(200).json({
         status: "success",
+        message: "Logged out successfully.",
     });
 });
 
