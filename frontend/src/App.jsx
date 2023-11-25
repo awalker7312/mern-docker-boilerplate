@@ -1,47 +1,47 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './styles/App.css'
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import SignIn from "./components/SignIn.jsx";
+import SignUp from "./components/SignUp.jsx";
+import NotFound from "./components/NotFound.jsx";
+import Dashboard from "./components/Dashboard.jsx";
+import Logout from "./components/Logout.jsx";
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [data, setData] = useState(null)
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
+    const location = useLocation();
+    axios.defaults.withCredentials = true;
 
-  useEffect(() => {
-    axios.get('/api/')
-      .then(response => {
-        setData(response.data)
-      })
-  }, []);
+    useEffect(() => {
+        axios
+            .get("/api/user/session")
+            .then((response) => {
+                if (response.data.user) {
+                    localStorage.setItem("user", JSON.stringify(response.data.user));
+                } else {
+                    localStorage.removeItem("user");
+                    if (location.pathname !== "/signup") {
+                        navigate("/signin");
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, [navigate]);
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          {data}
-        </p>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    return (
+        <div className="wrapper">
+            <Routes>
+                <Route path="/signin" element={<SignIn />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/logout" element={<Logout />} />
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+        </div>
+    );
 }
 
-export default App
+export default App;

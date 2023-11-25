@@ -11,19 +11,22 @@ require("./config/database");
 // Create an express application
 const app = express();
 app.use(express.json());
-app.disable('x-powered-by');
+app.use(express.urlencoded({ extended: true }));
+app.disable("x-powered-by");
 
-app.use(session({
-    name: "session",
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {secure: false },
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URI,
-        collectionName: "sessions",
-    }),
-}));
+app.use(
+    session({
+        name: "session",
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        cookie: { secure: false, httpOnly: true },
+        store: MongoStore.create({
+            mongoUrl: process.env.MONGO_URI,
+            collectionName: "sessions",
+        }),
+    })
+);
 
 // Set the port to the environment variable PORT or default to 3000
 const port = process.env.PORT || 3000;
