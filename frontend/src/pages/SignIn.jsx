@@ -1,4 +1,8 @@
-import * as React from "react";
+// Import necessary libraries and components
+import React, { useContext } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+// Import Material UI components
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -10,9 +14,13 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+// Import custom components
+import AuthApi from "../utils/Auth-Api.jsx";
 
+// Copied from https://mui.com/getting-started/templates/sign-in-side/
+// and modified to work with our backend
+
+// Copyright Component
 function Copyright(props) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -26,23 +34,30 @@ function Copyright(props) {
     );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
+// SignIn Component
 export default function SignIn() {
-    axios.defaults.withCredentials = true;
+    const authApi = useContext(AuthApi);
     const navigate = useNavigate();
 
+    // Send cookies with every request
+    axios.defaults.withCredentials = true;
+
+    // Handle form submission
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        // Convert form data to JSON
         const data = new FormData(event.currentTarget);
         const json = Object.fromEntries(data.entries());
 
+        // Post the form data to the login endpoint
         axios
             .post("/api/user/login", json)
             .then((response) => {
                 if (response.status === 200) {
-                    localStorage.setItem("user", JSON.stringify(response.data.user));
-                    navigate("/");
+                    authApi.setAuth(true);
+                    authApi.setUser(response.data.user);
+                    navigate("/", { replace: true });
                 } else {
                     navigate("/signin");
                 }
@@ -58,6 +73,7 @@ export default function SignIn() {
             });
     };
 
+    // Return the sign in form
     return (
         <Container component="main" maxWidth="xs">
             <Box

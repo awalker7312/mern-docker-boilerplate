@@ -95,7 +95,7 @@ router.post("/login", async (req, res) => {
     });
 });
 
-router.post("/logout", async (req, res) => {
+router.get("/logout", async (req, res) => {
     if (!req.session.user) {
         return res.status(400).json({
             status: "error",
