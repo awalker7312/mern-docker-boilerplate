@@ -1,52 +1,71 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import reactLogo from './assets/react.svg'
-import bootstrapLogo from './assets/bootstrap.svg'
-import viteLogo from '/vite.svg'
-import './styles/App.css'
-import { Button } from 'react-bootstrap';
+// Import necessary libraries and components
+import { useState, useEffect } from "react";
+import axios from "axios";
+// Import Material UI components
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+// Import custom components
+import AppRoutes from "./routes/App-Routes.jsx";
+import AuthApi from "./utils/Auth-Api.jsx";
 
+// App Component
 function App() {
-  const [count, setCount] = useState(0)
-  const [data, setData] = useState(null)
+    // Use state to store auth and user
+    const [auth, setAuth] = useState(false);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    axios.get('/api/')
-      .then(response => {
-        setData(response.data)
-      })
-  }, []);
+    // Send cookies with every request
+    axios.defaults.withCredentials = true;
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-        <a href="https://react-bootstrap.github.io/" target="_blank" rel="noreferrer">
-          <img src={bootstrapLogo} className="logo" alt="React Bootstrap logo" />
-        </a>
-      </div>
-      <h1>Vite + React + Bootstrap</h1>
-      <div className="card">
-        <Button variant="primary" onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </Button>
-        <p>
-          {data}
-        </p>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    // Check if the user is authenticated
+    const checkAuth = async () => {
+        try {
+            const response = await axios.get("/api/user/session");
+            if (response.data.user) {
+                setUser(response.data.user);
+                setAuth(true);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Check if the user is authenticated on component mount
+    useEffect(() => {
+        checkAuth();
+    }, []);
+
+    // Show a loading screen while checking authentication status
+    if (loading)
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100vh",
+                }}
+            >
+                <Typography variant="h4" component="h4" gutterBottom>
+                    Loading...
+                </Typography>
+                <CircularProgress />
+            </Box>
+        );
+
+    // Return the app
+    return (
+        <div className="wrapper">
+            <AuthApi.Provider value={{ auth, setAuth, user, setUser }}>
+                <AppRoutes />
+            </AuthApi.Provider>
+        </div>
+    );
 }
 
-export default App
+export default App;
