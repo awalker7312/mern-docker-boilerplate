@@ -1,5 +1,5 @@
 // Import necessary libraries and components
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 // Import Material UI components
@@ -39,6 +39,23 @@ export default function SignIn() {
     const authApi = useContext(AuthApi);
     const navigate = useNavigate();
 
+    // Handle remember me
+    const [email, setEmail] = useState("");
+    const [rememberMe, setRememberMe] = useState(false);
+    const emailRef = useRef();
+    const passwordRef = useRef();
+
+    useEffect(() => {
+        const savedEmail = localStorage.getItem("email");
+        if (savedEmail) {
+            setEmail(savedEmail);
+            setRememberMe(true);
+            passwordRef.current.focus();
+        } else {
+            emailRef.current.focus();
+        }
+    }, []);
+
     // Send cookies with every request
     axios.defaults.withCredentials = true;
 
@@ -49,6 +66,12 @@ export default function SignIn() {
         // Convert form data to JSON
         const data = new FormData(event.currentTarget);
         const json = Object.fromEntries(data.entries());
+
+        if (rememberMe) {
+            localStorage.setItem("email", json.email);
+        } else {
+            localStorage.removeItem("email");
+        }
 
         // Post the form data to the login endpoint
         axios
@@ -99,7 +122,9 @@ export default function SignIn() {
                         label="Email Address"
                         name="email"
                         autoComplete="email"
-                        autoFocus
+                        inputRef={emailRef}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
                     <TextField
                         margin="normal"
@@ -110,8 +135,19 @@ export default function SignIn() {
                         type="password"
                         id="password"
                         autoComplete="current-password"
+                        inputRef={passwordRef}
                     />
-                    <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
+                                name="rememberMe"
+                                color="primary"
+                            />
+                        }
+                        label="Remember me"
+                    />
                     <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                         Sign In
                     </Button>
