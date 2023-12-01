@@ -34,7 +34,13 @@ router.post("/register", async (req, res) => {
         // Creating a new user in the database with hashed password
         const user = await User.create(newUser);
 
-        req.session.user = { email: email, firstName: user.firstName, lastName: user.lastName , role: user.role, isLoggedIn: true };
+        req.session.user = {
+            email: email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+            isLoggedIn: true,
+        };
 
         // Sending a success response with the token and user information
         res.status(201).json({
@@ -67,6 +73,20 @@ router.get("/list", auth.isAuthenticated, async (req, res) => {
     }
 });
 
+router.get("/admin", auth.isAuthenticated, auth.isAdmin, async (req, res) => {
+    try {
+        res.status(200).json({
+            status: "success",
+            message: "You are seeing this because you are an admin.",
+        });
+    } catch (err) {
+        res.status(400).json({
+            status: "error",
+            error: err.message,
+        });
+    }
+});
+
 router.post("/login", async (req, res) => {
     // Extract email and password from the request body
     const { email, password } = req.body;
@@ -86,7 +106,13 @@ router.post("/login", async (req, res) => {
     if (!isPasswordCorrect) return res.status(401).json({ message: "Invalid credentials" });
 
     // User is logged in successfully, create a session
-    req.session.user = { email: email, firstName: user.firstName, lastName: user.lastName , role: user.role, isLoggedIn: true };
+    req.session.user = {
+        email: email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        isLoggedIn: true,
+    };
 
     // Send a successful response with the generated token and user information
     res.status(200).json({

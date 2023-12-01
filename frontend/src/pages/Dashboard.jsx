@@ -35,6 +35,15 @@ function Dashboard() {
         }
     };
 
+    const handleAdminSettings = async () => {
+        try {
+            let res = await axios.get("/api/user/admin");
+            alert("You are an Admin!");
+        } catch (error) {
+            //console.error("Failed to get admin settings");
+        }
+    };
+
     // Render the dashboard
     return (
         <>
@@ -48,7 +57,12 @@ function Dashboard() {
                     <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
                         MERN-DOCKER-BOILERPLATE
                     </Typography>
-                    <Button variant="outlined" sx={{ my: 1, mx: 1.5 }} onClick={handleLogout}>
+                    {user && user.role === "admin" && (
+                        <Button variant="outlined" sx={{ my: 1, mx: 1 }} onClick={handleAdminSettings}>
+                            Admin Settings
+                        </Button>
+                    )}
+                    <Button variant="outlined" sx={{ my: 1, mx: 1 }} onClick={handleLogout}>
                         Logout
                     </Button>
                 </Toolbar>
