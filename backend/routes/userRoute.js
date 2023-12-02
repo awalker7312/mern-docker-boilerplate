@@ -34,13 +34,8 @@ router.post("/register", async (req, res) => {
         // Creating a new user in the database with hashed password
         const user = await User.create(newUser);
 
-        req.session.user = {
-            email: email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            role: user.role,
-            isLoggedIn: true,
-        };
+        // Creating a session for the user utilizing the setSession function from another module.
+        auth.setSession(req, user);
 
         // Sending a success response with the token and user information
         res.status(201).json({
@@ -105,14 +100,8 @@ router.post("/login", async (req, res) => {
     // If the password is incorrect, return a 400 status with an error message
     if (!isPasswordCorrect) return res.status(401).json({ message: "Invalid credentials" });
 
-    // User is logged in successfully, create a session
-    req.session.user = {
-        email: email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-        isLoggedIn: true,
-    };
+    // Create a session for the user utilizing the setSession function from another module.
+    auth.setSession(req, user);
 
     // Send a successful response with the generated token and user information
     res.status(200).json({
