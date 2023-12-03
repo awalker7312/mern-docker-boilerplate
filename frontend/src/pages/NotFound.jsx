@@ -1,5 +1,4 @@
 // Import React and useNavigate hook
-import React from "react";
 import { useNavigate } from "react-router-dom";
 // Import Material UI components
 import Container from "@mui/material/Container";

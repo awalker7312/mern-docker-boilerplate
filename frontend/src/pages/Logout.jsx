@@ -17,7 +17,7 @@ export default function Logout() {
                     // Navigate to sign-in page
                     navigate("/signin");
                 })
-                .catch((error) => {
+                .catch(() => {
                     navigate("/signin");
                 });
         } else {

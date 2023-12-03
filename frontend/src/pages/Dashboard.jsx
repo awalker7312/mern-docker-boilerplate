@@ -1,12 +1,11 @@
 // Import necessary libraries and components
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 // Import Material UI components
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -55,7 +54,7 @@ function Dashboard() {
 
     const handleAdminSettings = async () => {
         try {
-            let res = await axios.get("/api/user/admin");
+            await axios.get("/api/user/admin");
             alert("You are an Admin!");
         } catch (error) {
             //console.error("Failed to get admin settings");
@@ -131,7 +130,7 @@ function Dashboard() {
                         </MenuItem>
                         <Divider />
                         {user && user.role === "admin" && (
-                            <MenuItem onClick={handleClose}>
+                            <MenuItem onClick={handleAdminSettings}>
                                 <ListItemIcon>
                                     <Settings fontSize="small" />
                                 </ListItemIcon>
