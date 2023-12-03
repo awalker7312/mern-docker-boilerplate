@@ -15,15 +15,15 @@ function AppRoutes() {
     // Render routes
     return (
         <Routes>
-            // If user is authenticated, redirect from root to dashboard, else to signin
+            {/* If user is authenticated, redirect from root to dashboard, else to signin*/}
             <Route path="/" element={authApi.auth ? <Navigate to="/dashboard" /> : <Navigate to="/signin" />} />
-            // If user is not authenticated, show signin page, else redirect to dashboard
+            {/* If user is not authenticated, show signin page, else redirect to dashboard */}
             <Route path="/signin" element={!authApi.auth ? <SignIn /> : <Navigate to="/dashboard" />} />
-            // If user is not authenticated, show signup page, else redirect to dashboard
+            {/* If user is not authenticated, show signup page, else redirect to dashboard */}
             <Route path="/signup" element={!authApi.auth ? <SignUp /> : <Navigate to="/dashboard" />} />
-            // If user is authenticated, show dashboard, else redirect to signin
+            {/* If user is authenticated, show dashboard, else redirect to signin */}
             <Route path="/dashboard" element={authApi.auth ? <DashBoard /> : <Navigate to="/signin" />} />
-            // For all other routes, show NotFound component
+            {/* For all other routes, show NotFound component */}
             <Route path="*" element={<NotFound />} />
         </Routes>
     );
