@@ -1,5 +1,5 @@
 // Import necessary libraries and components
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 // Import Material UI components
@@ -8,6 +8,15 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import Avatar from "@mui/material/Avatar";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Divider from "@mui/material/Divider";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Settings from "@mui/icons-material/Settings";
+import Logout from "@mui/icons-material/Logout";
 // Import custom components
 import AuthApi from "../utils/Auth-Api";
 
@@ -15,6 +24,15 @@ import AuthApi from "../utils/Auth-Api";
 function Dashboard() {
     const { user, setUser, setAuth } = useContext(AuthApi);
     const navigate = useNavigate();
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     // Send cookies with every request
     axios.defaults.withCredentials = true;
@@ -57,17 +75,79 @@ function Dashboard() {
                     <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
                         MERN-DOCKER-BOILERPLATE
                     </Typography>
-                    {user && user.role === "admin" && (
-                        <Button variant="outlined" sx={{ my: 1, mx: 1 }} onClick={handleAdminSettings}>
-                            Admin Settings
-                        </Button>
-                    )}
-                    <Button variant="outlined" sx={{ my: 1, mx: 1 }} onClick={handleLogout}>
-                        Logout
-                    </Button>
+                    <Tooltip title="Account settings">
+                        <IconButton
+                            onClick={handleClick}
+                            size="small"
+                            sx={{ ml: 2 }}
+                            aria-controls={open ? "account-menu" : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open ? "true" : undefined}
+                        >
+                            <Avatar sx={{ width: 32, height: 32, fontSize: '0.875rem' }}>
+                                {user.firstName.charAt(0)}
+                                {user.lastName.charAt(0)}
+                            </Avatar>
+                        </IconButton>
+                    </Tooltip>
+                    <Menu
+                        anchorEl={anchorEl}
+                        id="account-menu"
+                        open={open}
+                        onClose={handleClose}
+                        onClick={handleClose}
+                        PaperProps={{
+                            elevation: 0,
+                            sx: {
+                                overflow: "visible",
+                                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                                mt: 1.5,
+                                "& .MuiAvatar-root": {
+                                    width: 32,
+                                    height: 32,
+                                    ml: -0.5,
+                                    mr: 1,
+                                },
+                                "&:before": {
+                                    content: '""',
+                                    display: "block",
+                                    position: "absolute",
+                                    top: 0,
+                                    right: 14,
+                                    width: 10,
+                                    height: 10,
+                                    bgcolor: "background.paper",
+                                    transform: "translateY(-50%) rotate(45deg)",
+                                    zIndex: 0,
+                                },
+                            },
+                        }}
+                        transformOrigin={{ horizontal: "right", vertical: "top" }}
+                        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                    >
+                        <MenuItem onClick={handleClose}>
+                            <Avatar />
+                            My Profile
+                        </MenuItem>
+                        <Divider />
+                        {user && user.role === "admin" && (
+                            <MenuItem onClick={handleClose}>
+                                <ListItemIcon>
+                                    <Settings fontSize="small" />
+                                </ListItemIcon>
+                                Admin Settings
+                            </MenuItem>
+                        )}
+                        <MenuItem onClick={handleLogout}>
+                            <ListItemIcon>
+                                <Logout fontSize="small" />
+                            </ListItemIcon>
+                            Logout
+                        </MenuItem>
+                    </Menu>
                 </Toolbar>
             </AppBar>
-            <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
+            <Container disableGutters maxWidth="md" component="main" sx={{ pt: 8, pb: 6 }}>
                 {user && (
                     <Typography component="h1" variant="h2" align="center" color="text.primary" gutterBottom>
                         Welcome {user.firstName}!
