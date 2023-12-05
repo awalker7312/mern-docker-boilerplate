@@ -13,6 +13,3 @@ db.createUser({
 db = new Mongo().getDB("mern_boilerplate");
 
 db.createCollection("users", { capped: false });
-db.createCollection("test", { capped: false });
-
-db.test.insert([{ item: 1 }, { item: 2 }, { item: 3 }]);
