@@ -16,8 +16,28 @@ import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
+import GitHubIcon from '@mui/icons-material/GitHub';
 // Import custom components
 import AuthApi from '../utils/Auth-Api';
+
+// GitHubLink Component
+function GitHubLink() {
+	return (
+		<IconButton
+			href="https://github.com/awalker7312/mern-docker-boilerplate"
+			target="_blank"
+			rel="noopener noreferrer"
+			color="primary"
+			sx={{
+				position: 'fixed',
+				bottom: 5,
+				right: 5,
+				fontSize: '2rem'
+			}}>
+			<GitHubIcon fontSize="inherit" />
+		</IconButton>
+	);
+}
 
 // Dashboard Component
 function Dashboard() {
@@ -168,6 +188,7 @@ function Dashboard() {
 					environment. It demonstrates the ability to create secure and scalable
 					applications using containerization and modern web technologies.
 				</Typography>
+				<GitHubLink />
 			</Container>
 		</>
 	);

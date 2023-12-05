@@ -14,6 +14,8 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import GitHubIcon from '@mui/icons-material/GitHub';
 // Import custom components
 import AuthApi from '../utils/Auth-Api.jsx';
 
@@ -35,6 +37,25 @@ function Copyright(props) {
 			{new Date().getFullYear()}
 			{'.'}
 		</Typography>
+	);
+}
+
+// GitHubLink Component
+function GitHubLink() {
+	return (
+		<IconButton
+			href="https://github.com/awalker7312/mern-docker-boilerplate"
+			target="_blank"
+			rel="noopener noreferrer"
+			color="primary"
+			sx={{
+				position: 'fixed',
+				bottom: 5,
+				right: 5,
+				fontSize: '2rem'
+			}}>
+			<GitHubIcon fontSize="inherit" />
+		</IconButton>
 	);
 }
 
@@ -168,6 +189,7 @@ export default function SignIn() {
 				</Box>
 			</Box>
 			<Copyright sx={{mt: 8, mb: 4}} />
+			<GitHubLink />
 		</Container>
 	);
 }
