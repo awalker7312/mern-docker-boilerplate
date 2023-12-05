@@ -8,10 +8,10 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
 	try {
 		// Extracting user information from the request body
-		const { firstName, lastName, email, password, role } = req.body;
+		const {firstName, lastName, email, password, role} = req.body;
 
 		// Check if a user with the given email already exists
-		const existingUser = await User.findOne({ email });
+		const existingUser = await User.findOne({email});
 		if (existingUser) {
 			return res.status(400).json({
 				status: 'error',
@@ -52,7 +52,7 @@ router.post('/register', async (req, res) => {
 
 router.get('/list', auth.isAuthenticated, async (req, res) => {
 	try {
-		const users = await User.find({}, { email: 1, _id: 0 });
+		const users = await User.find({}, {email: 1, _id: 0});
 		res.status(200).json({
 			status: 'success',
 			results: users.length,
@@ -84,14 +84,14 @@ router.get('/admin', auth.isAuthenticated, auth.isAdmin, async (req, res) => {
 
 router.post('/login', async (req, res) => {
 	// Extract email and password from the request body
-	const { email, password } = req.body;
+	const {email, password} = req.body;
 
 	// Query the database to find a user with the provided email
-	const user = await User.findOne({ email });
+	const user = await User.findOne({email});
 
 	// Return a 404 status with an error message if the user is not found
 	if (!user) {
-		return res.status(401).json({ message: 'Invalid credentials' });
+		return res.status(401).json({message: 'Invalid credentials'});
 	}
 
 	// Verify the provided password against the hashed password in the database
@@ -99,7 +99,7 @@ router.post('/login', async (req, res) => {
 
 	// If the password is incorrect, return a 400 status with an error message
 	if (!isPasswordCorrect)
-		return res.status(401).json({ message: 'Invalid credentials' });
+		return res.status(401).json({message: 'Invalid credentials'});
 
 	// Create a session for the user utilizing the setSession function from another module.
 	auth.setSession(req, user);

@@ -11,7 +11,7 @@ require('./config/database');
 // Create an express application
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 app.disable('x-powered-by');
 
 app.use(
@@ -20,7 +20,7 @@ app.use(
 		secret: process.env.SESSION_SECRET,
 		resave: false,
 		saveUninitialized: false,
-		cookie: { secure: false, httpOnly: true },
+		cookie: {secure: false, httpOnly: true},
 		store: MongoStore.create({
 			mongoUrl: process.env.MONGO_URI,
 			collectionName: 'sessions'

@@ -14,4 +14,4 @@ db.createUser({
 // DB Seeding
 db = new Mongo().getDB('mern_boilerplate');
 
-db.createCollection('users', { capped: false });
+db.createCollection('users', {capped: false});
