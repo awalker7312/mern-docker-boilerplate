@@ -1,0 +1,16 @@
+{
+    "name": "parent-scripts",
+    "version": "1.0.0",
+    "description": "Useful development scripts to run on both the frontend and backend at the same time from the parent directory",
+    "scripts": {
+      "format": "npm run --prefix ./frontend format && npm run --prefix ./backend format",
+      "lint": "npm run --prefix ./frontend lint && npm run --prefix ./backend lint"
+    },
+    "repository": {
+		"type": "git",
+		"url": "git+https://github.com/awalker7312/mern-docker-boilerplate.git"
+	},
+    "keywords": [],
+    "author": "Alan Walker",
+    "license": "ISC"
+  }
