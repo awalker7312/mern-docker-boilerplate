@@ -1,5 +1,3 @@
-const session = require("express-session");
-
 exports.isAuthenticated = async (req, res, next) => {
     if (req.session.user && req.session.user.isLoggedIn === true) {
         next();
