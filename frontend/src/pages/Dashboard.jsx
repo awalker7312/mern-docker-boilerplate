@@ -74,10 +74,10 @@ function Dashboard() {
 
 	const handleAdminSettings = async () => {
 		try {
-			await axios.get('/api/user/admin');
-			alert('You are an Admin!');
+			const response = await axios.get('/api/user/admin');
+			if (response.status === 200) alert(response.data.message, 'success');
 		} catch (error) {
-			//console.error("Failed to get admin settings");
+			console.error('Failed to get admin settings');
 		}
 	};
 
