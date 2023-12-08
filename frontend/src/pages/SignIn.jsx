@@ -16,6 +16,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 // Import custom components
 import AuthApi from '../utils/Auth-Api.jsx';
 
@@ -63,17 +65,22 @@ function GitHubLink() {
 export default function SignIn() {
 	const authApi = useContext(AuthApi);
 	const navigate = useNavigate();
+	const [formData, setFormData] = useState({email: '', password: ''});
+	const [error, setError] = useState(null);
+	const [open, setOpen] = useState(false);
 
-	// Handle remember me
-	const [email, setEmail] = useState('');
+	// Handle remember me checkbox
 	const [rememberMe, setRememberMe] = useState(false);
 	const emailRef = useRef();
 	const passwordRef = useRef();
 
+	// Send cookies with every request
+	axios.defaults.withCredentials = true;
+
 	useEffect(() => {
 		const savedEmail = localStorage.getItem('email');
 		if (savedEmail) {
-			setEmail(savedEmail);
+			setFormData((prevState) => ({...prevState, email: savedEmail}));
 			setRememberMe(true);
 			passwordRef.current.focus();
 		} else {
@@ -81,8 +88,24 @@ export default function SignIn() {
 		}
 	}, []);
 
-	// Send cookies with every request
-	axios.defaults.withCredentials = true;
+	const handleClose = (event, reason) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+
+		setOpen(false);
+		//setError(null);
+	};
+
+	const handleChange = (event) => {
+		setFormData((prevState) => ({
+			...prevState,
+			[event.target.name]: event.target.value
+		}));
+		if (error) {
+			setError(null);
+		}
+	};
 
 	// Handle form submission
 	const handleSubmit = (event) => {
@@ -113,7 +136,20 @@ export default function SignIn() {
 			.catch((error) => {
 				if (error.response && error.response.status === 401) {
 					// Handle 401 error here
-					alert('Invalid Credentials');
+					setError(error.response.data.message);
+					setOpen(true);
+					// Clear the password field and set focus
+					setFormData((prevState) => ({
+						...prevState,
+						password: ''
+					}));
+
+					// set focus to email or password accordingly
+					if (formData.email === '') {
+						emailRef.current.focus();
+					} else {
+						passwordRef.current.focus();
+					}
 				} else {
 					// Handle other errors here
 					console.error(error);
@@ -147,8 +183,9 @@ export default function SignIn() {
 						name="email"
 						autoComplete="email"
 						inputRef={emailRef}
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
+						value={formData.email}
+						onChange={handleChange}
+						error={Boolean(error)}
 					/>
 					<TextField
 						margin="normal"
@@ -160,6 +197,9 @@ export default function SignIn() {
 						id="password"
 						autoComplete="current-password"
 						inputRef={passwordRef}
+						value={formData.password}
+						onChange={handleChange}
+						error={Boolean(error)}
 					/>
 					<FormControlLabel
 						control={
@@ -174,6 +214,11 @@ export default function SignIn() {
 					/>
 					<Button
 						type="submit"
+						disabled={
+							formData.email === '' ||
+							formData.password === '' ||
+							Boolean(error)
+						}
 						fullWidth
 						variant="contained"
 						sx={{mt: 3, mb: 2}}>
@@ -190,6 +235,11 @@ export default function SignIn() {
 			</Box>
 			<Copyright sx={{mt: 8, mb: 4}} />
 			<GitHubLink />
+			<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+				<Alert onClose={handleClose} severity="error" sx={{width: '100%'}}>
+					{error}
+				</Alert>
+			</Snackbar>
 		</Container>
 	);
 }
