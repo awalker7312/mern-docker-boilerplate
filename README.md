@@ -13,10 +13,10 @@ A developer-friendly dockerized MERN stack boilerplate.
 
 ## Environment Variables
 
-If it's your first time running this in either dev or prod, please make sure to rename the env file forthe front end.
+If it's your first time running this in either dev or prod, please make sure to rename the env file for the backend.
 
 ```bash
-  mv frontend/.example.env frontend/.env
+  mv backend/.example.env backend/.env
 ```
 
 ## Development
