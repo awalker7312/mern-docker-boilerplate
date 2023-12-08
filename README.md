@@ -11,6 +11,13 @@ A developer-friendly dockerized MERN stack boilerplate.
 
 **Server:** Node, Express, MongoDB
 
+## Environment Variables
+
+If it's your first time running this in either dev or prod, please make sure to rename the env file forthe front end.
+
+```bash
+  mv frontend/.example.env frontend/.env
+```
 
 ## Development
 
