@@ -95,11 +95,6 @@ export default function SignIn() {
 		setOpen(true);
 	};
 
-	const clearError = () => {
-		setError(null);
-		setOpen(false);
-	};
-
 	// Handle snackbar close
 	const handleClose = (event, reason) => {
 		if (reason === 'clickaway') {
@@ -115,9 +110,6 @@ export default function SignIn() {
 			...prevState,
 			[event.target.name]: event.target.value
 		}));
-		if (error) {
-			clearError();
-		}
 	};
 
 	// Handle form validation. Return true if email is in a valid format and password is at least 8 characters long.
