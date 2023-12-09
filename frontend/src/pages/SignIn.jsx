@@ -16,10 +16,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import Alert from '@mui/material/Alert';
-import Snackbar from '@mui/material/Snackbar';
 // Import custom components
 import AuthApi from '../utils/Auth-Api.jsx';
+import CustomSnackbar from '../components/CustomSnackbar.jsx';
 
 // Copied from https://mui.com/getting-started/templates/sign-in-side/
 // and modified to work with our backend
@@ -67,6 +66,8 @@ export default function SignIn() {
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState({email: '', password: ''});
 	const [error, setError] = useState(null);
+	const [emailError, setEmailError] = useState(false);
+	const [passwordError, setPasswordError] = useState(false);
 	const [open, setOpen] = useState(false);
 
 	// Handle remember me checkbox
@@ -77,6 +78,7 @@ export default function SignIn() {
 	// Send cookies with every request
 	axios.defaults.withCredentials = true;
 
+	// Set focus on email input if no email is saved in local storage, otherwise set focus on password input
 	useEffect(() => {
 		const savedEmail = localStorage.getItem('email');
 		if (savedEmail) {
@@ -88,73 +90,105 @@ export default function SignIn() {
 		}
 	}, []);
 
+	const showError = (message) => {
+		setError(message);
+		setOpen(true);
+	};
+
+	const clearError = () => {
+		setError(null);
+		setOpen(false);
+	};
+
+	// Handle snackbar close
 	const handleClose = (event, reason) => {
 		if (reason === 'clickaway') {
 			return;
 		}
 
 		setOpen(false);
-		//setError(null);
 	};
 
+	// Handle form input change
 	const handleChange = (event) => {
 		setFormData((prevState) => ({
 			...prevState,
 			[event.target.name]: event.target.value
 		}));
 		if (error) {
-			setError(null);
+			clearError();
 		}
+	};
+
+	// Handle form validation. Return true if email is in a valid format and password is at least 8 characters long.
+	const validateForm = () => {
+		// Validate email
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(formData.email)) {
+			setEmailError(true);
+			showError('Please enter a valid email address.');
+			formData.password = '';
+			emailRef.current.select();
+			emailRef.current.focus();
+			return false;
+		}
+
+		// Validate password
+		if (formData.password.length < 8) {
+			setPasswordError(true);
+			showError('Password must be at least 8 characters long.');
+			passwordRef.current.select();
+			passwordRef.current.focus();
+			return false;
+		}
+
+		return true;
 	};
 
 	// Handle form submission
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
-		// Convert form data to JSON
-		const data = new FormData(event.currentTarget);
-		const json = Object.fromEntries(data.entries());
+		if (validateForm()) {
+			// Convert form data to JSON
+			const data = new FormData(event.currentTarget);
+			const json = Object.fromEntries(data.entries());
 
-		if (rememberMe) {
-			localStorage.setItem('email', json.email);
-		} else {
-			localStorage.removeItem('email');
-		}
+			if (rememberMe) {
+				localStorage.setItem('email', json.email);
+			} else {
+				localStorage.removeItem('email');
+			}
 
-		// Post the form data to the login endpoint
-		axios
-			.post('/api/user/login', json)
-			.then((response) => {
-				if (response.status === 200) {
-					authApi.setAuth(true);
-					authApi.setUser(response.data.user);
-					navigate('/', {replace: true});
-				} else {
-					navigate('/signin');
-				}
-			})
-			.catch((error) => {
-				if (error.response && error.response.status === 401) {
-					// Handle 401 error here
-					setError(error.response.data.message);
-					setOpen(true);
-					// Clear the password field and set focus
-					setFormData((prevState) => ({
-						...prevState,
-						password: ''
-					}));
-
-					// set focus to email or password accordingly
-					if (formData.email === '') {
-						emailRef.current.focus();
+			// Post the form data to the login endpoint
+			axios
+				.post('/api/user/login', json)
+				.then((response) => {
+					if (response.status === 200) {
+						authApi.setAuth(true);
+						authApi.setUser(response.data.user);
+						navigate('/', {replace: true});
 					} else {
-						passwordRef.current.focus();
+						navigate('/signin');
 					}
-				} else {
-					// Handle other errors here
-					console.error(error);
-				}
-			});
+				})
+				.catch((error) => {
+					if (error.response && error.response.status === 401) {
+						// Handle 401 error here
+						showError(error.response.data.message);
+						// Clear the password field and set focus
+						setFormData((prevState) => ({
+							...prevState,
+							password: ''
+						}));
+						setPasswordError(true);
+						passwordRef.current.focus();
+					} else {
+						// Handle other errors here
+						showError('An unexpected error occurred.');
+					}
+				});
+		}
 	};
 
 	// Return the sign in form
@@ -184,8 +218,11 @@ export default function SignIn() {
 						autoComplete="email"
 						inputRef={emailRef}
 						value={formData.email}
-						onChange={handleChange}
-						error={Boolean(error)}
+						onChange={(e) => {
+							handleChange(e);
+							setEmailError(false);
+						}}
+						error={Boolean(emailError)}
 					/>
 					<TextField
 						margin="normal"
@@ -198,8 +235,11 @@ export default function SignIn() {
 						autoComplete="current-password"
 						inputRef={passwordRef}
 						value={formData.password}
-						onChange={handleChange}
-						error={Boolean(error)}
+						onChange={(e) => {
+							handleChange(e);
+							setPasswordError(false);
+						}}
+						error={Boolean(passwordError)}
 					/>
 					<FormControlLabel
 						control={
@@ -214,11 +254,6 @@ export default function SignIn() {
 					/>
 					<Button
 						type="submit"
-						disabled={
-							formData.email === '' ||
-							formData.password === '' ||
-							Boolean(error)
-						}
 						fullWidth
 						variant="contained"
 						sx={{mt: 3, mb: 2}}>
@@ -235,11 +270,12 @@ export default function SignIn() {
 			</Box>
 			<Copyright sx={{mt: 8, mb: 4}} />
 			<GitHubLink />
-			<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-				<Alert onClose={handleClose} severity="error" sx={{width: '100%'}}>
-					{error}
-				</Alert>
-			</Snackbar>
+			<CustomSnackbar
+				open={Boolean(open)}
+				handleClose={handleClose}
+				message={error || error}
+				severity={'error'}
+			/>
 		</Container>
 	);
 }
