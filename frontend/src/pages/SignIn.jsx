@@ -17,7 +17,7 @@ import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import GitHubIcon from '@mui/icons-material/GitHub';
 // Import custom components
-import AuthApi from '../utils/Auth-Api.jsx';
+import AuthApi from '../contexts/Auth';
 import CustomSnackbar from '../components/CustomSnackbar.jsx';
 
 // Copied from https://mui.com/getting-started/templates/sign-in-side/
@@ -265,7 +265,7 @@ export default function SignIn() {
 			<CustomSnackbar
 				open={Boolean(open)}
 				handleClose={handleClose}
-				message={error || error}
+				message={error || 'An unexpected error occurred.'}
 				severity={'error'}
 			/>
 		</Container>

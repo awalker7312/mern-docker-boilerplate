@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 // Import custom components
 import AppRoutes from './routes/App-Routes.jsx';
-import AuthApi from './utils/Auth-Api.jsx';
+import AuthApi from './contexts/Auth';
 
 // App Component
 function App() {

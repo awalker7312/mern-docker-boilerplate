@@ -18,7 +18,7 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import GitHubIcon from '@mui/icons-material/GitHub';
 // Import custom components
-import AuthApi from '../utils/Auth-Api';
+import AuthApi from '../contexts/Auth';
 
 // GitHubLink Component
 function GitHubLink() {

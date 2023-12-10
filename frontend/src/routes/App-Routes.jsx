@@ -1,7 +1,7 @@
 // Import necessary libraries and components
 import {Routes, Route, Navigate} from 'react-router-dom';
 import {useContext} from 'react';
-import AuthApi from '../utils/Auth-Api';
+import AuthApi from '../contexts/Auth';
 import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
 import DashBoard from '../pages/Dashboard';

@@ -13,7 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 // Import custom components
-import AuthApi from '../utils/Auth-Api.jsx';
+import AuthApi from '../contexts/Auth';
 
 // Copied from https://mui.com/getting-started/templates/sign-up/
 // and modified to work with our backend
