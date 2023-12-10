@@ -16,9 +16,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import Alert from '@mui/material/Alert';
 // Import custom components
 import AuthApi from '../contexts/Auth';
-import CustomSnackbar from '../components/CustomSnackbar.jsx';
 
 // Copied from https://mui.com/getting-started/templates/sign-in-side/
 // and modified to work with our backend
@@ -65,10 +65,10 @@ export default function SignIn() {
 	const authApi = useContext(AuthApi);
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState({email: '', password: ''});
+	// Handle form validation errors
 	const [error, setError] = useState(null);
-	const [emailError, setEmailError] = useState(false);
-	const [passwordError, setPasswordError] = useState(false);
-	const [open, setOpen] = useState(false);
+	const [emailError, setEmailError] = useState(null);
+	const [passwordError, setPasswordError] = useState(null);
 
 	// Handle remember me checkbox
 	const [rememberMe, setRememberMe] = useState(false);
@@ -90,20 +90,6 @@ export default function SignIn() {
 		}
 	}, []);
 
-	const showError = (message) => {
-		setError(message);
-		setOpen(true);
-	};
-
-	// Handle snackbar close
-	const handleClose = (event, reason) => {
-		if (reason === 'clickaway') {
-			return;
-		}
-
-		setOpen(false);
-	};
-
 	// Handle form input change
 	const handleChange = (event) => {
 		setFormData((prevState) => ({
@@ -116,9 +102,8 @@ export default function SignIn() {
 	const validateForm = () => {
 		// Validate email
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRegex.test(formData.email)) {
-			setEmailError(true);
-			showError('Please enter a valid email address.');
+		if (!emailRegex.test(formData.email.trim())) {
+			setEmailError('Please enter a valid email address.');
 			formData.password = '';
 			emailRef.current.select();
 			emailRef.current.focus();
@@ -127,8 +112,7 @@ export default function SignIn() {
 
 		// Validate password
 		if (formData.password.length < 8) {
-			setPasswordError(true);
-			showError('Password must be at least 8 characters long.');
+			setPasswordError('Password must be at least 8 characters long.');
 			passwordRef.current.select();
 			passwordRef.current.focus();
 			return false;
@@ -139,48 +123,51 @@ export default function SignIn() {
 
 	// Handle form submission
 	const handleSubmit = (event) => {
+		// Prevent form from submitting if there are any validation errors
+		if (!validateForm()) {
+			event.preventDefault();
+			return;
+		}
 		event.preventDefault();
 
-		if (validateForm()) {
-			// Convert form data to JSON
-			const data = new FormData(event.currentTarget);
-			const json = Object.fromEntries(data.entries());
+		// Convert form data to JSON
+		const data = new FormData(event.currentTarget);
+		const json = Object.fromEntries(data.entries());
 
-			if (rememberMe) {
-				localStorage.setItem('email', json.email);
-			} else {
-				localStorage.removeItem('email');
-			}
-
-			// Post the form data to the login endpoint
-			axios
-				.post('/api/user/login', json)
-				.then((response) => {
-					if (response.status === 200) {
-						authApi.setAuth(true);
-						authApi.setUser(response.data.user);
-						navigate('/', {replace: true});
-					} else {
-						navigate('/signin');
-					}
-				})
-				.catch((error) => {
-					if (error.response && error.response.status === 401) {
-						// Handle 401 error here
-						showError(error.response.data.message);
-						// Clear the password field and set focus
-						setFormData((prevState) => ({
-							...prevState,
-							password: ''
-						}));
-						setPasswordError(true);
-						passwordRef.current.focus();
-					} else {
-						// Handle other errors here
-						showError('An unexpected error occurred.');
-					}
-				});
+		if (rememberMe) {
+			localStorage.setItem('email', json.email);
+		} else {
+			localStorage.removeItem('email');
 		}
+
+		// Post the form data to the login endpoint
+		axios
+			.post('/api/user/login', json)
+			.then((response) => {
+				if (response.status === 200) {
+					authApi.setAuth(true);
+					authApi.setUser(response.data.user);
+					navigate('/', {replace: true});
+				} else {
+					navigate('/signin');
+				}
+			})
+			.catch((error) => {
+				if (error.response && error.response.status === 401) {
+					// Handle 401 error here
+					setError(error.response.data.message);
+					// Clear the password field and set focus
+					setFormData((prevState) => ({
+						...prevState,
+						password: ''
+					}));
+					setPasswordError(true);
+					passwordRef.current.focus();
+				} else {
+					// Handle other errors here
+					setError('An unexpected error occurred.');
+				}
+			});
 	};
 
 	// Return the sign in form
@@ -200,6 +187,11 @@ export default function SignIn() {
 					Sign in
 				</Typography>
 				<Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
+					{error && (
+						<Alert severity="error" sx={{mt: 1, mb: 1}}>
+							{error}
+						</Alert>
+					)}
 					<TextField
 						margin="normal"
 						required
@@ -215,6 +207,7 @@ export default function SignIn() {
 							setEmailError(false);
 						}}
 						error={Boolean(emailError)}
+						helperText={emailError}
 					/>
 					<TextField
 						margin="normal"
@@ -232,6 +225,7 @@ export default function SignIn() {
 							setPasswordError(false);
 						}}
 						error={Boolean(passwordError)}
+						helperText={passwordError}
 					/>
 					<FormControlLabel
 						control={
@@ -262,12 +256,6 @@ export default function SignIn() {
 			</Box>
 			<Copyright sx={{mt: 8, mb: 4}} />
 			<GitHubLink />
-			<CustomSnackbar
-				open={Boolean(open)}
-				handleClose={handleClose}
-				message={error || 'An unexpected error occurred.'}
-				severity={'error'}
-			/>
 		</Container>
 	);
 }
